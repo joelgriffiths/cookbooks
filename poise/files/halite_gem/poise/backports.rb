@@ -1,5 +1,5 @@
 #
-# Copyright 2013-2015, Noah Kantrowitz
+# Copyright 2015, Noah Kantrowitz
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,5 +16,12 @@
 
 
 module Poise
-  VERSION = '2.3.0'
+  # Backported features from Chef to be able to use them with older versions.
+  #
+  # @since 2.3.0
+  module Backports
+    autoload :NOT_PASSED, 'poise/backports/not_passed'
+  end
+
+  autoload :NOT_PASSED, 'poise/backports/not_passed'
 end

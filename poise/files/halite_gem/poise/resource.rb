@@ -34,18 +34,21 @@ module Poise
   module Resource
     include Poise::Helpers::ChefspecMatchers
     include Poise::Helpers::DefinedIn
-    include Poise::Helpers::LazyDefault
+    include Poise::Helpers::LazyDefault if Poise::Helpers::LazyDefault.needs_polyfill?
     include Poise::Helpers::LWRPPolyfill
     include Poise::Helpers::OptionCollector
+    include Poise::Helpers::ResourceCloning
     include Poise::Helpers::ResourceName
+    include Poise::Helpers::ResourceSubclass
     include Poise::Helpers::TemplateContent
 
     # @!classmethods
     module ClassMethods
-      def poise_subresource_container(namespace=nil)
+      def poise_subresource_container(namespace=nil, default=nil)
         include Poise::Helpers::Subresources::Container
         # false is a valid value.
         container_namespace(namespace) unless namespace.nil?
+        container_default(default) unless default.nil?
       end
 
       def poise_subresource(parent_type=nil, parent_optional=nil, parent_auto=nil)
