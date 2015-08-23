@@ -1,9 +1,8 @@
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# THIS FILE IS MANAGED BY CHEF, DO NOT EDIT MANUALLY, YOUR CHANGES WILL BE OVERWRITTEN!
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# This file is managed by Chef, do not edit manually, your changes *will* be overwritten!
 #
-# See the source file for context and more information:
-# <https://github.com/elastic/elasticsearch/blob/master/core/config/logging.yml>
+# Please see the source file for context and more information:
+#
+# https://github.com/elasticsearch/elasticsearch/blob/master/config/logging.yml
 #
 # Any settings configured under the `node.elasticsearch.logging`
 # node attribute will be automatically used.
@@ -30,7 +29,7 @@ es.logger.level: INFO
 rootLogger: INFO, console, file
 
 # ----- Configuration set by Chef ---------------------------------------------
-<% @logging.sort.each do |key, value| %>
+<% node.elasticsearch[:logging].sort.each do |key, value| %>
 logger.<%= key %>: <%= value %>
 <% end %>
 # -----------------------------------------------------------------------------
