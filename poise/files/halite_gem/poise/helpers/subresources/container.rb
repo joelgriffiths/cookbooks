@@ -48,15 +48,18 @@ module Poise
 
         def after_created
           super
-          # Register
-          Poise::Helpers::Subresources::DefaultContainers.register!(self, run_context)
+          # Register as a default container if needed.
+          Poise::Helpers::Subresources::DefaultContainers.register!(self, run_context) if self.class.container_default
+          # Add all internal subresources to the resource collection.
           unless @subresources.empty?
             Chef::Log.debug("[#{self}] Adding subresources to collection:")
             # Because after_create is run before adding the container to the resource collection
             # we need to jump through some hoops to get it swapped into place.
             self_ = self
             order_fixer = Chef::Resource::RubyBlock.new('subresource_order_fixer', @run_context)
+            order_fixer.declared_type = 'ruby_block'
             order_fixer.block do
+              Chef::Log.debug("[#{self_}] Running order fixer")
               collection = self_.run_context.resource_collection
               # Delete the current container resource from its current position.
               collection.all_resources.delete(self_)
@@ -111,8 +114,13 @@ module Poise
             end
             resource << super(type, sub_name, created_at) do
               # Apply the correct parent before anything else so it is available
-              # in after_created for the subresource.
-              parent(self_) if respond_to?(:parent)
+              # in after_created for the subresource. It might raise
+              # NoMethodError is there isn't a real parent.
+              begin
+                parent(self_) if respond_to?(:parent)
+              rescue NoMethodError
+                # This space left intentionally blank.
+              end
               # Run the resource block.
               instance_exec(&block) if block
             end
@@ -145,10 +153,31 @@ module Poise
           def container_namespace(val=nil)
             @container_namespace = val unless val.nil?
             if @container_namespace.nil?
-              # Not set here, look at the superclass of true by default for backwards compat.
-              superclass.respond_to?(:container_namespace) ? superclass.container_namespace : true
+              # Not set here, look at the superclass or true by default for backwards compat.
+              Poise::Utils.ancestor_send(self, :container_namespace, default: true)
             else
               @container_namespace
+            end
+          end
+
+          # @overload container_default()
+          #   Get the default mode for this resource. If false, this resource
+          #   class will not be used for default container lookups. Defaults to
+          #   true.
+          #   @since 2.3.0
+          #   @return [Boolean]
+          # @overload container_default(val)
+          #   Set the default mode for this resource.
+          #   @since 2.3.0
+          #   @param val [Boolean] Default mode to set.
+          #   @return [Boolean]
+          def container_default(val=nil)
+            @container_default = val unless val.nil?
+            if @container_default.nil?
+              # Not set here, look at the superclass or true by default for backwards compat.
+              Poise::Utils.ancestor_send(self, :container_default, default: true)
+            else
+              @container_default
             end
           end
 
