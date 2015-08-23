@@ -4,7 +4,6 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-include_recipe "pm2::default"
 include_recipe "pm2::nodejs"
 include_recipe "nginx"
 
@@ -25,7 +24,7 @@ end
   end.run_action(:create)
 end
 
-cookbook_file '/var/app/nodejs/hello.js' do
+cookbook_file '/etc/pm2/conf.d/hello.js' do
   source 'hello.js'
   owner 'nobody'
   mode '0755'
@@ -35,5 +34,5 @@ end
 pm2_application 'hello.js' do
   script 'hello.js'
   cwd '/var/app/nodejs'
-  action :start_or_restart
+  action [:deploy, :start_or_restart]
 end

@@ -7,5 +7,6 @@ long_description 'Installs/Configures dawebsite'
 version '0.1.0'
 
 
+depends "nodejs"
 depends "pm2"
 depends "nginx"
