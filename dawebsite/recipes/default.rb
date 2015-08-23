@@ -15,7 +15,7 @@ template "/etc/nginx/sites-enabled/default" do
   notifies :restart, "service[nginx]", :delayed
 end
 
-%w[ /var /var/app /var/app/nodejs ].each do |path|
+%w[ /var /var/app /var/app/nodejs /etc/pm2 /etc/pm2/conf.d ].each do |path|
   directory path do
     owner 'root'
     group 'root'

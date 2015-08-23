@@ -8,8 +8,8 @@ default['elasticsearch']['filename']      = "elasticsearch-#{node['elasticsearch
 default['elasticsearch']['download_url']  = [node['elasticsearch']['host'], node['elasticsearch']['repository'], node['elasticsearch']['filename']].join('/')
 
 # give us an elasticsearch cluster with these plugins by default
+# 'karmi/elasticsearch-paramedic' => {},
 default['elasticsearch']['plugins'] = {
-  'karmi/elasticsearch-paramedic' => {},
   'mobz/elasticsearch-head' => {},
   'jlinn/elasticsearch-cloud-rackspace' => {
     'url' => 'https://github.com/jlinn/elasticsearch-cloud-rackspace/releases/download/v0.4.1/elasticsearch-cloud-rackspace-0.4.1.zip'
