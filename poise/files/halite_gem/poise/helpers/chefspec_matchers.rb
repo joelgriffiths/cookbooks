@@ -60,9 +60,13 @@ module Poise
         # Create a resource-level matcher for this resource.
         #
         # @see Resource::ResourceName.provides
-        def provides(name)
+        def provides(name, *args, &block)
           ChefSpec.define_matcher(name) if defined?(ChefSpec)
-          super
+          # Call #actions here to grab any actions from a parent class.
+          actions.each do |action|
+            ChefspecMatchers.create_matcher(name, action)
+          end
+          super(name, *args, &block)
         end
 
         # Create matchers for all declared actions.
@@ -72,7 +76,7 @@ module Poise
           super.tap do |actions|
             actions.each do |action|
               ChefspecMatchers.create_matcher(resource_name, action)
-            end
+            end if resource_name
           end
         end
 
